@@ -26,8 +26,8 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(HANDLE out_handle, colo
 
     set_color_mode(mode);
     colors_[level::trace] = WHITE;
-    colors_[level::debug] = CYAN;
-    colors_[level::info] = GREEN;
+    colors_[level::debug] = GREEN;
+    colors_[level::info] = BOLD;
     colors_[level::warn] = YELLOW | BOLD;
     colors_[level::err] = RED | BOLD;                         // red bold
     colors_[level::critical] = BACKGROUND_RED | WHITE | BOLD; // white bold on red background
