@@ -6,18 +6,16 @@ Very fast, header-only/compiled, C++ logging library. [![Build Status](https://t
 
 ## Install 
 #### Header only version
-* Copy the source [folder](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) to your build tree and use a C++11 compiler.
+Copy the source [folder](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) to your build tree and use a C++11 compiler.
 
-#### Static lib version (recommended - much faster compile times, v1.4.0)
-* Copy [src/spdlog.cpp](https://github.com/gabime/spdlog/blob/v1.x/src/spdlog.cpp) to your build tree and pass the `-DSPDLOG_COMPILED_LIB` to the compiler.
-* Or use **CMake** to build:
-
-      $ git clone https://github.com/gabime/spdlog.git
-      $ cd spdlog && mkdir build && cd build
-      $ cmake .. && make -j
+#### Static lib version (recommended - much faster compile times)
+```console
+$ git clone https://github.com/gabime/spdlog.git
+$ cd spdlog && mkdir build && cd build
+$ cmake .. && make -j
+```
       
    see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v1.x/example/CMakeLists.txt) on how to use.
-
 
 ## Platforms
  * Linux, FreeBSD, OpenBSD, Solaris, AIX
@@ -32,11 +30,14 @@ Very fast, header-only/compiled, C++ logging library. [![Build Status](https://t
 * Gentoo: `emerge dev-libs/spdlog`
 * Arch Linux: `yaourt -S spdlog-git`
 * vcpkg: `vcpkg install spdlog`
+* conan: `spdlog/[>=1.4.1]@bincrafters/stable`
+
 
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).
 * Headers only, just copy and use. Or use as a compiled library.
 * Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
+* **New!** [Backtrace](#backtrace-support) support - store debug or other messages in a ring buffer and display later on demand.
 * Fast asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
@@ -137,15 +138,20 @@ void daily_example()
 ```
 
 ---
-#### Cloning loggers 
+#### Backtrace support
 ```c++
-// clone a logger and give it new name.
-// Useful for creating subsystem loggers from some "root" logger
-void clone_example()
+// Loggers can store in a ring buffer all messages (including debug/trace) and display later on demand.
+// When needed, call dump_backtrace() to see them
+spdlog::enable_backtrace(32); // create ring buffer with capacity of 32  messages
+// or my_logger->enable_backtrace(32)..
+for(int i = 0; i < 100; i++)
 {
-    auto network_logger = spdlog::get("root")->clone("network");
-    network_logger->info("Logging network stuff..");
+  spdlog::debug("Backtrace message {}", i); // not logged yet..
 }
+// e.g. if some error happened:
+spdlog::dump_backtrace(); // log them now! show the last 32 messages
+
+// or my_logger->dump_backtrace(32)..
 ```
 
 ---
